@@ -1,0 +1,45 @@
+{% extends "layout.html" %} 
+
+{% block title %} - Insert {% endblock %} 
+
+{% block main %}
+<form action="/insert" method="post" class="mt-4">
+  <div
+    class="md:grid w-4/5 md:grid-cols-2 gap-2 justify-items-center mx-auto lg:w-2/3"
+  >
+    <input
+      autocomplete="off"
+      autofocus
+      class="border-solid border-2 border-gray-100 p-1 focus:outline-none dark:focus:ring-gray-700 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
+      name="name"
+      placeholder="Music Name"
+      type="text"
+      required
+    >
+    <select
+      class="mx-auto w-auto border-solid border-2 border-gray-100 p-1 focus:outline-none dark:focus:ring-gray-700 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
+      name="session"
+    >
+      <option disabled selected>Session</option>
+      {% for session in sessions %}
+        <option value="{{session}}">{{session}}</option>
+      {% endfor %}
+    </select>
+    <textarea
+      class="w-full mx-auto p-1 mt-2 md:col-span-2 border-solid border-2 border-gray-100 focus:outline-none dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
+      autocomplete="off"
+      name="music_sheet"
+      placeholder="Music Sheet"
+      rows="22"
+      cols="100"
+      required
+    ></textarea>
+    <button
+      class="md:col-span-2 mt-2 mb-4 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg md:text-lg md:px-6 md:py-2 text-center text-base px-4 py-2 w-full dark:bg-indigo-600"
+      type="submit"
+    >
+      Insert
+    </button>
+  </div>
+</form>
+{% endblock %}

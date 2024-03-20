@@ -1,0 +1,33 @@
+{% extends "layout.html" %} 
+
+{% block title %} - Index {% endblock %} 
+
+{% block main %}
+<section class="">
+    <div class="gap-16 items-center py-2 px-4 mx-auto max-w-screen-xl lg:gap-4 lg:grid lg:grid-cols-2 lg:py-16 lg:px-6">
+        {% if not session["user_id"] %}
+        <div class="mb-6 col-span-2 text-right">
+            <a href="/login">
+                <button
+                    type="button"
+                    class="rounded-md px-3 py-1.5 lg:mb-0 lg:px-5 lg:py-2 text-sm font-semibold leading-6
+                     text-white shadow-sm bg-green-500 hover:bg-green-400 focus-visible:outline-green-500 
+                     focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 dark:bg-indigo-600
+                    dark:hover:bg-indigo-500 dark:focus-visible:outline-indigo-600"> 
+                    Sign in
+                </button>
+            </a>
+        </div>
+        {% endif %}
+        <div class="font-light text-gray-500 sm:text-lg dark:text-gray-400">
+            <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Serving God can be less complicated</h2>
+            <p class="mb-4 text-gray-900 dark:text-white">Welcome to the best music sheet management app for catholic music ministry. In this application you can register your sheet music, edit it and instantly generate the repertoire for your next mass.</p>
+            <p class="text-gray-900 dark:text-white">At the service of God in benefits of God's people.</p>
+        </div>
+        <div class="grid grid-cols-2 gap-6 mt-8 lg:mt-0">
+            <img class="w-full rounded-lg" src="{{url_for('static',filename='index_image_2.png')}}" alt="church image">
+            <img class="mt-6 w-full lg:mt-16 rounded-lg" src="{{url_for('static',filename='index_image_1.jpeg')}}" alt="musical note image">
+        </div>
+    </div>
+</section>
+{% endblock %}

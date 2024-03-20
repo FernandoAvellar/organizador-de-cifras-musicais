@@ -1,0 +1,54 @@
+{% extends "layout.html" %} 
+
+{% block title %} - List all {% endblock %} 
+
+{% block main %}
+<section class="container bg-gray-50 dark:bg-gray-900 p-3 sm:p-5">
+  <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead
+          class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+        >
+          <tr>
+            <th scope="col" class="px-4 py-3 dark:text-white">Number</th>
+            <th scope="col" class="px-4 py-3 dark:text-white">Name</th>
+            <th scope="col" class="px-4 py-3 dark:text-white">Session</th>
+            {% if session['username'] == 'admin' %}
+              <th scope="col" class="px-4 py-3 dark:text-white">Delete</th>
+              <th scope="col" class="px-4 py-3 dark:text-white">Edit</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for sheet in sheets %}
+            <tr class="border-b dark:border-gray-700">
+              <td class="px-4 py-3">{{ sheet[0] }}</td>
+              <td class="px-4 py-3 name-cell hover:decoration-solid" data-cifra-id="{{ sheet[0] }}">{{ sheet[1] }}</td>
+              <td class="px-4 py-3">{{ sheet[2] }}</td>
+              {% if session['username'] == 'admin' %}
+                <td class="px-4 py-3"><a href="#" class="delete-link flex justify-left ml-3" data-cifra-id="{{ sheet[0] }}"><img src="{{url_for('static',filename='trash.png')}}" class="size-5"></a></td>
+                <td class="px-4 py-3"><a href="#" class="update-link flex justify-left ml-3" data-cifra-id="{{ sheet[0] }}"><img src="{{url_for('static',filename='update.png')}}" class="size-5"></a></td>
+              {% endif %}
+              <td
+                class="px-4 py-3 flex items-center justify-end dark:text-white"
+              ></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <!-- Popup container -->
+    <div id="popup-container" class="hidden fixed top-0 w-fill justify-center items-center">
+      <div class="text-white bg-gray-800 p-4 rounded-lg border-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+        <h2 class="text-lg font-semibold mb-2">Sheet Music</h2>
+        <div id="cifra-content" class="overflow-y-auto max-h-96"></div>
+        <button id="close-popup" class="mt-4 px-3 py-1.5 text-white rounded-md bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium text-md text-center dark:bg-indigo-600">Close</button>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+
+
