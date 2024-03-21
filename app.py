@@ -2,7 +2,9 @@ from flask import Flask, render_template, request, redirect, session, flash
 from flask_session import Session
 from psycopg2 import Error
 from werkzeug.security import check_password_hash, generate_password_hash
-from utilities import login_required, DatabaseUtility
+from functools import wraps
+import os
+import psycopg2
 
 
 # Configure lithurgical sessions in a catholic mass to sort sheet musics.
@@ -22,15 +24,60 @@ SESSOES_DA_MISSA = {
     13: "Ofertório"
 }
 
+
+def login_required(f):
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("user_id") is None:
+            return redirect("/index")
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
+class DatabaseUtilities:
+    def __init__(self):
+        self.connection = None
+        self.cursor = None
+
+    def connect(self):
+        try:
+            self.connection = psycopg2.connect(
+                user=os.getenv("DB_USER"),
+                password=os.getenv("DB_PASSWORD"),
+                host=os.getenv("DB_HOST"),
+                port=os.getenv("DB_PORT"),
+                database=os.getenv("DB_NAME")
+            )
+            self.cursor = self.connection.cursor()
+
+        except (Exception, Error) as err:
+            flash("Error while connecting to database", 'error')
+            print("Error while connecting to database:", err)
+            self.cursor = None
+            self.connection = None
+
+        print("Opened database connection")
+
+    def close(self):
+        if self.connection and self.cursor:
+            self.cursor.close()
+            self.connection.close()
+            print("Closed database connection")
+        else:
+            print("No active database connection")
+
+
 app = Flask(__name__)
+
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-
-db = DatabaseUtility()
+db = DatabaseUtilities()
 
 
 @app.route("/")
@@ -159,7 +206,8 @@ def filter():
 
         else:
             db.connect()
-            db.cursor.execute("SELECT id, nome, sessao FROM cifras")
+            db.cursor.execute(
+                "SELECT id, nome, sessao FROM cifras")
             sheets = db.cursor.fetchall()
             db.close()
 
@@ -253,7 +301,8 @@ def delete(id):
 
     db.connect()
     try:
-        db.cursor.execute("DELETE FROM cifras WHERE id = %s", (id,))
+        db.cursor.execute(
+            "DELETE FROM cifras WHERE id = %s", (id,))
         db.connection.commit()
         flash('Sheet music deleted successfully', 'info')
     except Exception as err:
@@ -275,7 +324,8 @@ def edit_cifra(id):
 
     db.connect()
     try:
-        db.cursor.execute("SELECT * FROM cifras WHERE id = %s", (id,))
+        db.cursor.execute(
+            "SELECT * FROM cifras WHERE id = %s", (id,))
         cifra_data = db.cursor.fetchone()
         sessions = SESSOES_DA_MISSA.values()
         return render_template('update.html', cifra_data=cifra_data, sessions=sessions)
@@ -323,7 +373,8 @@ def update(id):
 def get_cifra(id):
     db.connect()
     try:
-        db.cursor.execute("SELECT cifra FROM cifras WHERE id = %s", (id,))
+        db.cursor.execute(
+            "SELECT cifra FROM cifras WHERE id = %s", (id,))
         cifra_data = db.cursor.fetchone()
         if cifra_data:
             return cifra_data[0]
